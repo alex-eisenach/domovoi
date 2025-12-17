@@ -59,3 +59,6 @@ podAnnotations:
   prometheus.io/scrape: "true"      # Enable scraping on this pod
   prometheus.io/port: "9617"        # Sidecar metrics port
   prometheus.io/path: "/metrics"    # Default path – explicit for safety
+
+test:
+  forcesync: true
