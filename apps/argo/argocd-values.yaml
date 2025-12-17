@@ -1,0 +1,31 @@
+# argocd-values.yaml
+server:
+  service:
+    type: LoadBalancer  # this will share the VIP with Pi-hole/WireGuard
+  resources:
+    limits:
+      cpu: "300m"
+      memory: "512Mi"
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+
+redis:
+  resources:
+    limits:
+      cpu: "200m"
+      memory: "128Mi"
+
+controller:
+  resources:
+    limits:
+      cpu: "400m"
+      memory: "512Mi"
+
+repoServer:
+  resources:
+    limits:
+      cpu: "200m"
+      memory: "256Mi"
+
+applicationSet: {}  # Enable later?

@@ -1,0 +1,46 @@
+# wireguard-values.yaml
+
+# Service: Rely on chart default (LoadBalancer, UDP 51820)
+# MetalLB will assign a VIP from your pool (e.g., your home LAN range like 192.168.1.240-192.168.1.250)
+# Optional: Pin a specific VIP if desired (must be in your MetalLB pool)
+service:
+  type: LoadBalancer  # Explicit for clarity (chart default)
+  port: 51820
+  protocol: UDP
+  # loadBalancerIP: 192.168.1.245  # Uncomment to reserve a fixed VIP (recommended for stable Endpoint)
+
+# WireGuard server config
+wireguard:
+  address: 10.8.0.1/24
+  listenPort: 51820
+  # privateKey: "..."  # Pre-seed if preferred
+
+  clients:
+    - name: phone
+      publicKey: "R1psgTsB97OrvgbOdaiT59p/YH5ztHDQrWosvmOJ7S4="
+      allowedIPs: 10.8.0.2/32
+    - name: laptop
+      publicKey: ""
+      allowedIPs: 10.8.0.3/32
+
+# Prometheus integration (auto ServiceMonitor)
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+
+# Privileged + resources (as before)
+securityContext:
+  privileged: true
+  capabilities:
+    add: ["NET_ADMIN", "SYS_MODULE"]
+
+resources:
+  limits:
+    cpu: "500m"
+    memory: "256Mi"
+  requests:
+    cpu: "100m"
+    memory: "64Mi"
+
+

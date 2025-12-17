@@ -1,0 +1,60 @@
+replicaCount: 1                     # Keep 1 for single-node edge
+
+persistentVolumeClaim:
+  enabled: true
+  size: 5Gi
+
+admin:
+  existingSecret: pihole-webpassword
+  passwordKey: password
+
+pod:
+  hostNetwork: false # Essential for single-node k3s – binds DNS directly to host port 53
+  dnspolicy: ClusterFirstWithHostNet
+
+serviceWeb:
+  type: LoadBalancer
+  annotations:
+    metallb.universe.tf/allow-shared-ip: "pihole-shared"
+    metallb.universe.tf/address-pool: pihole-pool
+
+serviceDns:
+  type: LoadBalancer
+  port: 53
+  externalTrafficPolicy: Local 
+  annotations:
+    metallb.universe.tf/allow-shared-ip: "pihole-shared"
+    metallb.universe.tf/address-pool: pihole-pool
+
+env:
+  TZ: "America/Denver"
+  WEBPASSWORD: ""
+  DNS1: 8.8.8.8
+  DNS2: 8.8.4.4
+
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "100m"
+  limits:
+    memory: "512Mi"
+    cpu: "500m"
+
+monitoring:
+  sidecar:
+    enabled: true
+    image:
+      repository: ekofr/pihole-exporter
+      tag: latest
+      pullPolicy: IfNotPresent
+    port: 9617
+    apiToken: "$BALLOON-SHA256$v=1$s=1024,t=32$/5E3hRJ64J95Xh2hOXMl/g==$4O+iHh/M+1weH+n5LM8brD/6Qhc668GcWcH9WqrQHhA="
+    resources: {}
+
+  podMonitor:
+    enabled: true   # This creates the PodMonitor CRD for auto-discovery
+
+podAnnotations:
+  prometheus.io/scrape: "true"      # Enable scraping on this pod
+  prometheus.io/port: "9617"        # Sidecar metrics port
+  prometheus.io/path: "/metrics"    # Default path – explicit for safety

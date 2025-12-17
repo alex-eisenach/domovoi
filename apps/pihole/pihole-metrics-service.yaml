@@ -1,0 +1,13 @@
+# Save as pihole-metrics-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: pihole-metrics
+  namespace: pihole
+spec:
+  selector:
+    app.kubernetes.io/name: pihole   # Matches your main pod
+  ports:
+    - name: metrics
+      port: 9617
+      targetPort: 9617

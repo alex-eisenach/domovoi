@@ -1,0 +1,18 @@
+# Save as metallb-pool.yaml
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: home-pool
+  namespace: metallb-system
+spec:
+  addresses:
+  - 192.168.1.29-192.168.1.34   # Your exact Pi IP
+---
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: home-advertisement
+  namespace: metallb-system
+spec:
+  ipAddressPools:
+  - home-pool
