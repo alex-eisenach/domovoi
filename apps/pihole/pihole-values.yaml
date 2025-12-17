@@ -1,4 +1,5 @@
-replicaCount: 1                     # Keep 1 for single-node edge
+deployment:
+  replicaCount: 1
 
 persistentVolumeClaim:
   enabled: true
